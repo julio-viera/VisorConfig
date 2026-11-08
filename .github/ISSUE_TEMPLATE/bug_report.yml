@@ -1,0 +1,44 @@
+name: Bug report
+description: Report a problem you encountered in Visor Config.
+labels: [bug]
+body:
+  - type: input
+    id: app-version
+    attributes:
+      label: Visor Config version
+      description: Copy the version from the About dialog or from `visor-config --version`.
+      placeholder: 1.0.0-beta.1
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Operating system and installation method
+      placeholder: Ubuntu 24.04, DEB package
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the actions that trigger the bug. Include the file format and view if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Describe what happened and include any error message you saw.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots, logs, or sample file
+      description: Share a minimal example if possible. Remove secrets and personal data before posting.

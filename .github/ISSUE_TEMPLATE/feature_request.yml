@@ -1,0 +1,28 @@
+name: Feature request
+description: Suggest a new feature or an improvement to Visor Config.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: Describe what you are trying to do and where you get stuck.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed improvement
+      description: Describe how you would like Visor Config to behave.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or workarounds
+      description: Describe other approaches you considered or what you do today.
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples or additional context
+      description: Add a sample workflow, mockup, or example file if it helps explain the request.
