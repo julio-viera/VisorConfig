@@ -1,6 +1,6 @@
 // Canonical application metadata. Packaging scripts read this file as well.
 const appName = 'Visor Config';
-const appVersion = '1.0.0-beta.1';
+const appVersion = 'v1.0.0-beta.1';
 const appAuthor = 'Julio Viera';
 const appLicenseName = 'GPL 3';
 const appLicenseSpdx = 'GPL-3.0-only';
