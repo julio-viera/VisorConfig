@@ -1,11 +1,15 @@
-# Release history
+# Visor Config releases
 
-## 1.0.0-beta.1 (pre-release)
+## Latest release
 
-The first beta of Visor Config introduces a tabbed editor for configuration files with syntax highlighting, JSON Schema validation, side-by-side comparisons, and export tools.
+> **1.0.0-beta.1 · Pre-release**
+>
+> The first beta includes a tabbed configuration editor, syntax highlighting, JSON Schema validation, side-by-side comparisons, and export tools.
+>
+> [Download packages on GitHub](https://github.com/julio-viera/VisorConfig/releases/tag/v1.0.0-beta.1) · [Read the release notes](dist-docs/README-v1.0.0.md)
 
-[Read the Visor Config 1.0.0 release notes](dist-docs/README-v1.0.0.md)
+## Release history
 
-### Linux packages
-
-Download links are pending for DEB, RPM, Flatpak, and Snap. When the packages are published, this section will list the available downloads by format and architecture.
+| Version | Status | Links |
+| --- | --- | --- |
+| 1.0.0-beta.1 | Pre-release | [Downloads](https://github.com/julio-viera/VisorConfig/releases/tag/v1.0.0-beta.1) · [Release notes](dist-docs/README-v1.0.0.md) |

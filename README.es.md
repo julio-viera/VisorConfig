@@ -2,6 +2,8 @@
 
 [English](README.md) · [Français](README.fr.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Italiano](README.it.md)
 
+[Versiones y descargas](RELEASES.md)
+
 <img src="docs/images/visor-config.svg" width="300" alt="Visor Config">
 
 Visor Config es una aplicación simple múltiplataforma para ver, edita, valida y compara archivos de configuración en varios formatos. Resaltado de sintansis y exportación a varios formatos.

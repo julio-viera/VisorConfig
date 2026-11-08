@@ -10,3 +10,5 @@ The first release of Visor Config brings configuration file editing, validation,
 - Follow the system theme or choose light or dark mode. Adjust the color palette, font, and font size. The interface is available in English, Spanish, French, Portuguese, German, and Italian.
 
 The project provides build scripts for DEB, RPM, Flatpak, and Snap packages on Linux. [Packaging instructions (Spanish)](../tools/README.md) · [User guide](../README.md)
+
+[Release history and downloads](../RELEASES.md)

@@ -75,6 +75,8 @@ StartupWMClass={app_id}
             filename = 'README.md' if lang == 'en' else f'README.{lang}.md'
             text = (root / filename).read_text(encoding='utf-8')
             text = text.replace('docs/images/', '../images/').replace('(LICENSE)', '(../LICENSE)')
+            releases_url = f"{info['repositoryUrl']}/blob/HEAD/RELEASES.md"
+            text = text.replace('(RELEASES.md)', f'({releases_url})')
             for target in info['descriptions']:
                 target_file = 'README.md' if target == 'en' else f'README.{target}.md'
                 text = text.replace(f'({target_file})', f'(../{target}/README.md)')
