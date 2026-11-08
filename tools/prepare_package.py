@@ -164,8 +164,13 @@ fi
         snap = f'''name: {package}
 base: core24
 version: '{version}'
+title: {json.dumps(name, ensure_ascii=False)}
 summary: JSON viewer and editor
 description: {json.dumps(info['descriptions']['en'], ensure_ascii=False)}
+contact: {json.dumps(info['issuesUrl'])}
+issues: {json.dumps(info['issuesUrl'])}
+source-code: {json.dumps(info['repositoryUrl'])}
+website: {json.dumps(info['repositoryUrl'])}
 grade: stable
 confinement: strict
 license: {info['licenseSpdx']}
