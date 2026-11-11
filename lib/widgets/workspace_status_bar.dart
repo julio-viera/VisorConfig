@@ -10,6 +10,7 @@ class WorkspaceStatusBar extends StatelessWidget {
     super.key,
     required this.status,
     required this.parsing,
+    required this.saving,
     required this.valid,
     required this.hasError,
     required this.characters,
@@ -17,7 +18,7 @@ class WorkspaceStatusBar extends StatelessWidget {
     required this.onAbout,
   });
   final String status, language;
-  final bool parsing, valid, hasError;
+  final bool parsing, saving, valid, hasError;
   final int characters;
   final VoidCallback onAbout;
 
@@ -25,6 +26,7 @@ class WorkspaceStatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = CodePalette.of(context);
     final strings = AppStrings(language);
+    final visibleStatus = saving ? strings.tr('Guardando…', 'Saving…') : status;
     return LayoutBuilder(
       builder: (context, constraints) => Container(
         key: const Key('workspace-status-bar'),
@@ -92,25 +94,31 @@ class WorkspaceStatusBar extends StatelessWidget {
                     style: TextStyle(fontSize: 11, color: palette.muted),
                   ),
                   const SizedBox(width: 8),
-                  Icon(
-                    parsing
-                        ? Icons.hourglass_empty
-                        : valid
-                        ? Icons.check_circle_outline
-                        : Icons.error_outline,
-                    size: 14,
-                    color: hasError
-                        ? palette.error
-                        : valid
-                        ? const Color(0xff299777)
-                        : palette.text,
-                  ),
+                  if (saving)
+                    const SizedBox.square(
+                      dimension: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  else
+                    Icon(
+                      parsing
+                          ? Icons.hourglass_empty
+                          : valid
+                          ? Icons.check_circle_outline
+                          : Icons.error_outline,
+                      size: 14,
+                      color: hasError
+                          ? palette.error
+                          : valid
+                          ? const Color(0xff299777)
+                          : palette.text,
+                    ),
                   const SizedBox(width: 4),
                   Flexible(
                     child: Tooltip(
-                      message: status,
+                      message: visibleStatus,
                       child: Text(
-                        status,
+                        visibleStatus,
                         key: const Key('parse-status'),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

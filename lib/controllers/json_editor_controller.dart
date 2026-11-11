@@ -153,8 +153,8 @@ class JsonEditorController extends TextEditingController {
             header,
             TextStyle(
               color: header.trimLeft().startsWith('[')
-                  ? palette.key
-                  : palette.muted,
+                  ? palette.section
+                  : palette.comment,
             ),
           );
         } else {
@@ -185,12 +185,14 @@ class JsonEditorController extends TextEditingController {
         ConfigFormat.properties => palette.text,
         ConfigFormat.json =>
           token.startsWith('/')
-              ? palette.muted
+              ? palette.comment
               : quotedKey
               ? palette.key
               : quoted
               ? palette.string
-              : token == 'true' || token == 'false' || token == 'null'
+              : token == 'null'
+              ? palette.nullLiteral
+              : token == 'true' || token == 'false'
               ? palette.literal
               : palette.number,
         ConfigFormat.yaml =>
@@ -199,17 +201,23 @@ class JsonEditorController extends TextEditingController {
               : (m.group(1) != null || m.group(7) != null)
               ? palette.string
               : m.group(3) != null
-              ? palette.muted
+              ? palette.comment
               : m.group(6) != null
               ? palette.number
+              : m.group(4) != null
+              ? palette.directive
+              : token == '~' || token.toLowerCase() == 'null'
+              ? palette.nullLiteral
               : palette.literal,
         ConfigFormat.toml =>
-          quotedKey || m.group(2) != null || m.group(3) != null
+          m.group(2) != null
+              ? palette.section
+              : quotedKey || m.group(3) != null
               ? palette.key
               : m.group(1) != null
               ? palette.string
               : m.group(4) != null
-              ? palette.muted
+              ? palette.comment
               : m.group(5) != null
               ? palette.literal
               : palette.number,

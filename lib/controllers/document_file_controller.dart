@@ -229,11 +229,13 @@ class DocumentFileController {
       return _save(document, saveAs: saveAs);
     }();
     _pendingSaves[document] = next;
+    if (previous == null) changed();
     try {
       return await next;
     } finally {
       if (identical(_pendingSaves[document], next)) {
         _pendingSaves.remove(document);
+        changed();
       }
     }
   }

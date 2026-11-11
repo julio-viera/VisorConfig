@@ -1,4 +1,10 @@
 const translatedMessages = <String, Map<String, String>>{
+  'Saving…': {
+    'fr': 'Enregistrement…',
+    'pt': 'Salvando…',
+    'de': 'Wird gespeichert…',
+    'it': 'Salvataggio…',
+  },
   'Document format': {
     'fr': 'Format du document',
     'pt': 'Formato do documento',

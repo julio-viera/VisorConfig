@@ -780,6 +780,7 @@ class _WorkspaceState extends State<WorkspaceScreen>
                   WorkspaceStatusBar(
                     status: status(d),
                     parsing: d.parsing,
+                    saving: fileController.pendingSave(d) != null,
                     valid: result?.valid == true,
                     hasError: hasError,
                     characters: d.editor.text.length,

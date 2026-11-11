@@ -40,6 +40,12 @@ class CodePalette extends ThemeExtension<CodePalette> {
   Color get string => dark ? const Color(0xffa7f3d0) : const Color(0xff116149);
   Color get number => dark ? const Color(0xfffcd34d) : const Color(0xff854300);
   Color get literal => dark ? const Color(0xffc4b5fd) : const Color(0xff5b21b6);
+  Color get comment => dark ? const Color(0xffa5b4c7) : const Color(0xff526078);
+  Color get section => dark ? const Color(0xff67e8f9) : const Color(0xff0e6175);
+  Color get directive =>
+      dark ? const Color(0xfff9a8d4) : const Color(0xff9d174d);
+  Color get nullLiteral =>
+      dark ? const Color(0xfffdba74) : const Color(0xff9a3412);
   Color get error => dark ? const Color(0xffff8a8a) : const Color(0xffb91c1c);
   Color get errorBackground =>
       dark ? const Color(0xff4c1820) : const Color(0xfffee2e2);
