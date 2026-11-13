@@ -112,6 +112,8 @@ class _VisorConfigAppState extends State<VisorConfigApp> {
       colorTheme: settings.colorTheme,
       beforeExit: settings.flush,
       onColorTheme: settings.updateColorTheme,
+      indentWithTabs: settings.indentWithTabs,
+      onIndentation: settings.updateIndentation,
       onSettings: settings.update,
     ),
   );

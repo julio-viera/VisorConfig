@@ -17,6 +17,8 @@ class SettingsDialog extends StatefulWidget {
     required this.colorTheme,
     required this.onSettings,
     this.onColorTheme,
+    this.indentWithTabs = false,
+    this.onIndentation,
   });
   final ThemeMode theme;
   final String language, colorTheme;
@@ -25,6 +27,8 @@ class SettingsDialog extends StatefulWidget {
   final Future<bool> Function(FontPreferences)? onFont;
   final void Function(ThemeMode, String, double) onSettings;
   final ValueChanged<String>? onColorTheme;
+  final bool indentWithTabs;
+  final ValueChanged<bool>? onIndentation;
   @override
   State<SettingsDialog> createState() => _SettingsDialogState();
 }
@@ -34,6 +38,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
   late String language = widget.language;
   late double size = widget.fontSize;
   late String colors = widget.colorTheme;
+  late bool indentWithTabs = widget.indentWithTabs;
   String tr(String es, String en) => AppStrings(
     resolveLanguage(
       language,
@@ -129,6 +134,28 @@ class _SettingsDialogState extends State<SettingsDialog> {
               onChanged: (v) {
                 setState(() => language = v!);
                 widget.onSettings(theme, language, size);
+              },
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<bool>(
+              initialValue: indentWithTabs,
+              decoration: InputDecoration(
+                labelText: tr('Sangría del editor', 'Editor indentation'),
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: false,
+                  child: Text(tr('4 espacios', '4 spaces')),
+                ),
+                DropdownMenuItem(
+                  value: true,
+                  child: Text(tr('Tabulador', 'Tab character')),
+                ),
+              ],
+              onChanged: (value) {
+                if (value == null) return;
+                setState(() => indentWithTabs = value);
+                widget.onIndentation?.call(value);
               },
             ),
             const SizedBox(height: 20),

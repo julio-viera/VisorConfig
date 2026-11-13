@@ -15,8 +15,10 @@ class AppSettings {
     this.colorTheme = 'jade',
     this.window = const WindowGeometry(),
     this.lastOpenDirectory,
+    this.indentWithTabs = false,
   });
   final String? lastOpenDirectory;
+  final bool indentWithTabs;
   final ThemeMode theme;
   final String language, colorTheme;
   final double fontSize;
@@ -25,6 +27,7 @@ class AppSettings {
   factory AppSettings.fromJson(Map<String, dynamic> json) {
     final font = json['fontSize'];
     return AppSettings(
+      indentWithTabs: json['indentWithTabs'] == true,
       lastOpenDirectory:
           json['lastOpenDirectory'] is String &&
               (json['lastOpenDirectory'] as String).trim().isNotEmpty
@@ -49,6 +52,7 @@ class AppSettings {
   }
   Map<String, dynamic> toJson() => {
     'version': 1,
+    'indentWithTabs': indentWithTabs,
     'theme': theme.name,
     'language': language,
     'fontSize': fontSize,

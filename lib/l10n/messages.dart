@@ -1,4 +1,22 @@
 const translatedMessages = <String, Map<String, String>>{
+  'Editor indentation': {
+    'fr': 'Indentation de l’éditeur',
+    'pt': 'Recuo do editor',
+    'de': 'Einrückung im Editor',
+    'it': 'Rientro nell’editor',
+  },
+  '4 spaces': {
+    'fr': '4 espaces',
+    'pt': '4 espaços',
+    'de': '4 Leerzeichen',
+    'it': '4 spazi',
+  },
+  'Tab character': {
+    'fr': 'Tabulation',
+    'pt': 'Tabulação',
+    'de': 'Tabulatorzeichen',
+    'it': 'Tabulazione',
+  },
   'Saving…': {
     'fr': 'Enregistrement…',
     'pt': 'Salvando…',

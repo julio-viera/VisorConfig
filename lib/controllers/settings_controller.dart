@@ -20,6 +20,7 @@ class SettingsController extends ChangeNotifier {
        fontSize = initial.fontSize,
        font = initial.font,
        lastOpenDirectory = initial.lastOpenDirectory,
+       indentWithTabs = initial.indentWithTabs,
        colorTheme = initial.colorTheme {
     var maximized = windowSession?.geometry.maximized;
     windowSession?.onChanged = (geometry) {
@@ -39,6 +40,7 @@ class SettingsController extends ChangeNotifier {
   ThemeMode theme;
   String language, colorTheme;
   double fontSize;
+  bool indentWithTabs;
   FontPreferences font;
   int _fontRevision = 0;
   bool _disposed = false;
@@ -47,6 +49,12 @@ class SettingsController extends ChangeNotifier {
     this.theme = theme;
     this.language = language;
     this.fontSize = fontSize;
+    notifyListeners();
+    persist();
+  }
+
+  void updateIndentation(bool value) {
+    indentWithTabs = value;
     notifyListeners();
     persist();
   }
@@ -78,6 +86,7 @@ class SettingsController extends ChangeNotifier {
       await store.save(
         AppSettings(
           theme: theme,
+          indentWithTabs: indentWithTabs,
           language: language,
           fontSize: fontSize,
           font: font,

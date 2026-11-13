@@ -30,14 +30,19 @@ void main() {
           .widget<TextField>(find.byKey(const Key('json-editor')))
           .controller!
           .text,
-      '{\n  \n}',
+      '{\n    \n}',
     );
     final editor = tester.widget<TextField>(
       find.byKey(const Key('json-editor')),
     );
-    expect(editor.controller!.selection.baseOffset, 4);
+    expect(editor.controller!.selection.baseOffset, 6);
     expect(editor.focusNode!.hasFocus, isTrue);
     expect(find.text('Untitled 2'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    expect(editor.controller!.text, '{\n        \n}');
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    expect(editor.controller!.text, '{\n        \n        \n}');
+
     await tester.tap(find.text('● Untitled 1'));
     await tester.pumpAndSettle();
     expect(find.text('name   "Julio"'), findsOneWidget);

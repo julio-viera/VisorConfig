@@ -43,6 +43,8 @@ class WorkspaceScreen extends StatefulWidget {
     required this.onSettings,
     this.colorTheme = 'jade',
     this.onColorTheme,
+    this.indentWithTabs = false,
+    this.onIndentation,
     this.lastOpenDirectory,
     this.onOpenDirectory,
     this.beforeExit,
@@ -60,6 +62,8 @@ class WorkspaceScreen extends StatefulWidget {
   final String? lastOpenDirectory;
   final Future<void> Function(String)? onOpenDirectory;
   final ValueChanged<String>? onColorTheme;
+  final bool indentWithTabs;
+  final ValueChanged<bool>? onIndentation;
   final Future<void> Function()? beforeExit;
   final LaunchResult launch;
   final Stream<LaunchResult>? externalLaunches;
@@ -193,15 +197,16 @@ class _WorkspaceState extends State<WorkspaceScreen>
     String? path,
     bool unsaved = false,
   }) {
+    final indent = widget.indentWithTabs ? '\t' : '    ';
     final d = workspace.add(
       untitledLabel: tr('Sin título', 'Untitled'),
       name: name,
-      text: text ?? '{\n  \n}',
+      text: text ?? '{\n$indent\n}',
       path: path,
       unsaved: unsaved,
     );
     if (text == null) {
-      d.editor.selection = const TextSelection.collapsed(offset: 4);
+      d.editor.selection = TextSelection.collapsed(offset: 2 + indent.length);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !d.closed && identical(doc, d)) {
           d.rawFocus.requestFocus();
@@ -487,6 +492,8 @@ class _WorkspaceState extends State<WorkspaceScreen>
       colorTheme: widget.colorTheme,
       onSettings: widget.onSettings,
       onColorTheme: widget.onColorTheme,
+      indentWithTabs: widget.indentWithTabs,
+      onIndentation: widget.onIndentation,
     ),
   );
 
@@ -834,6 +841,7 @@ class _WorkspaceState extends State<WorkspaceScreen>
 
   Widget rawView(EditorDocumentController d) => RawEditor(
     document: d,
+    indentWithTabs: widget.indentWithTabs,
     hint: tr(
       'Pega una configuración aquí o abre un archivo…',
       'Paste configuration here or open a file…',

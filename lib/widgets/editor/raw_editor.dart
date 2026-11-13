@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../controllers/editor_document_controller.dart';
 import '../../themes/app_typography.dart';
@@ -16,9 +17,36 @@ class RawEditor extends StatelessWidget {
     required this.document,
     required this.hint,
     required this.largeNotice,
+    this.indentWithTabs = false,
   });
   final EditorDocumentController document;
   final String hint, largeNotice;
+  final bool indentWithTabs;
+
+  void insertIndentation({bool newline = false}) {
+    final editor = document.editor;
+    final value = editor.value;
+    final selection = value.selection;
+    if (!selection.isValid || selection.end > value.text.length) return;
+
+    var insertion = indentWithTabs ? '\t' : '    ';
+    if (newline) {
+      final start = selection.start;
+      final lineStart = start == 0
+          ? 0
+          : value.text.lastIndexOf('\n', start - 1) + 1;
+      final prefix = value.text.substring(lineStart, start);
+      final indent = RegExp(r'^[ \t]*').stringMatch(prefix)!;
+      insertion = '\n$indent';
+    }
+    editor.value = TextEditingValue(
+      text: value.text.replaceRange(selection.start, selection.end, insertion),
+      selection: TextSelection.collapsed(
+        offset: selection.start + insertion.length,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => ColoredBox(
     color: CodePalette.of(context).background,
@@ -157,20 +185,32 @@ class RawEditor extends StatelessWidget {
                   ),
                   child: Stack(
                     children: [
-                      TextField(
-                        key: const Key('json-editor'),
-                        controller: document.editor,
-                        focusNode: document.rawFocus,
-                        scrollController: document.rawScroll,
-                        expands: true,
-                        maxLines: null,
-                        minLines: null,
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        keyboardType: TextInputType.multiline,
-                        style: metrics.style.copyWith(color: palette.text),
-                        strutStyle: metrics.strut,
-                        decoration: null,
+                      CallbackShortcuts(
+                        bindings: {
+                          const SingleActivator(LogicalKeyboardKey.tab):
+                              insertIndentation,
+                          const SingleActivator(LogicalKeyboardKey.enter): () =>
+                              insertIndentation(newline: true),
+                          const SingleActivator(
+                            LogicalKeyboardKey.numpadEnter,
+                          ): () =>
+                              insertIndentation(newline: true),
+                        },
+                        child: TextField(
+                          key: const Key('json-editor'),
+                          controller: document.editor,
+                          focusNode: document.rawFocus,
+                          scrollController: document.rawScroll,
+                          expands: true,
+                          maxLines: null,
+                          minLines: null,
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          keyboardType: TextInputType.multiline,
+                          style: metrics.style.copyWith(color: palette.text),
+                          strutStyle: metrics.strut,
+                          decoration: null,
+                        ),
                       ),
                       if (text.isEmpty)
                         IgnorePointer(
