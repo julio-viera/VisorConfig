@@ -30,8 +30,9 @@ void main() {
           .widget<TextField>(find.byKey(const Key('json-editor')))
           .controller!
           .text,
-      isEmpty,
+      '{}',
     );
+    expect(find.text('Untitled 2'), findsOneWidget);
     await tester.tap(find.text('● Untitled 1'));
     await tester.pumpAndSettle();
     expect(find.text('name   "Julio"'), findsOneWidget);

@@ -189,7 +189,7 @@ class _WorkspaceState extends State<WorkspaceScreen>
 
   void addDocument({
     String? name,
-    String text = '',
+    String text = '{}',
     String? path,
     bool unsaved = false,
   }) {
