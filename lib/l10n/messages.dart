@@ -5,11 +5,11 @@ const translatedMessages = <String, Map<String, String>>{
     'de': 'Einrückung im Editor',
     'it': 'Rientro nell’editor',
   },
-  '4 spaces': {
-    'fr': '4 espaces',
-    'pt': '4 espaços',
-    'de': '4 Leerzeichen',
-    'it': '4 spazi',
+  '2 spaces': {
+    'fr': '2 espaces',
+    'pt': '2 espaços',
+    'de': '2 Leerzeichen',
+    'it': '2 spazi',
   },
   'Tab character': {
     'fr': 'Tabulation',

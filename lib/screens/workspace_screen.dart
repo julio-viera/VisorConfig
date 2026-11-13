@@ -197,7 +197,7 @@ class _WorkspaceState extends State<WorkspaceScreen>
     String? path,
     bool unsaved = false,
   }) {
-    final indent = widget.indentWithTabs ? '\t' : '    ';
+    final indent = widget.indentWithTabs ? '\t' : '  ';
     final d = workspace.add(
       untitledLabel: tr('Sin título', 'Untitled'),
       name: name,

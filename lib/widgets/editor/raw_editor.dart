@@ -29,7 +29,9 @@ class RawEditor extends StatelessWidget {
     final selection = value.selection;
     if (!selection.isValid || selection.end > value.text.length) return;
 
-    var insertion = indentWithTabs ? '\t' : '    ';
+    final unit = indentWithTabs ? '\t' : '  ';
+    var insertion = unit;
+    var trailing = '';
     if (newline) {
       final start = selection.start;
       final lineStart = start == 0
@@ -37,10 +39,20 @@ class RawEditor extends StatelessWidget {
           : value.text.lastIndexOf('\n', start - 1) + 1;
       final prefix = value.text.substring(lineStart, start);
       final indent = RegExp(r'^[ \t]*').stringMatch(prefix)!;
-      insertion = '\n$indent';
+      final betweenBraces =
+          selection.isCollapsed &&
+          prefix.endsWith('{') &&
+          start < value.text.length &&
+          value.text[start] == '}';
+      insertion = betweenBraces ? '\n$indent$unit' : '\n$indent';
+      if (betweenBraces) trailing = '\n$indent';
     }
     editor.value = TextEditingValue(
-      text: value.text.replaceRange(selection.start, selection.end, insertion),
+      text: value.text.replaceRange(
+        selection.start,
+        selection.end,
+        insertion + trailing,
+      ),
       selection: TextSelection.collapsed(
         offset: selection.start + insertion.length,
       ),
@@ -199,6 +211,41 @@ class RawEditor extends StatelessWidget {
                         child: TextField(
                           key: const Key('json-editor'),
                           controller: document.editor,
+                          inputFormatters: [
+                            TextInputFormatter.withFunction((
+                              oldValue,
+                              newValue,
+                            ) {
+                              final selection = oldValue.selection;
+                              if (!oldValue.composing.isCollapsed ||
+                                  !newValue.composing.isCollapsed ||
+                                  !selection.isValid ||
+                                  !selection.isCollapsed ||
+                                  selection.end > oldValue.text.length) {
+                                return newValue;
+                              }
+                              final offset = selection.start;
+                              if (newValue.selection !=
+                                      TextSelection.collapsed(
+                                        offset: offset + 1,
+                                      ) ||
+                                  newValue.text !=
+                                      oldValue.text.replaceRange(
+                                        offset,
+                                        offset,
+                                        '{',
+                                      )) {
+                                return newValue;
+                              }
+                              return newValue.copyWith(
+                                text: newValue.text.replaceRange(
+                                  offset + 1,
+                                  offset + 1,
+                                  '}',
+                                ),
+                              );
+                            }),
+                          ],
                           focusNode: document.rawFocus,
                           scrollController: document.rawScroll,
                           expands: true,

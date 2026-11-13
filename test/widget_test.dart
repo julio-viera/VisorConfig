@@ -30,18 +30,33 @@ void main() {
           .widget<TextField>(find.byKey(const Key('json-editor')))
           .controller!
           .text,
-      '{\n    \n}',
+      '{\n  \n}',
     );
     final editor = tester.widget<TextField>(
       find.byKey(const Key('json-editor')),
     );
-    expect(editor.controller!.selection.baseOffset, 6);
+    expect(editor.controller!.selection.baseOffset, 4);
     expect(editor.focusNode!.hasFocus, isTrue);
     expect(find.text('Untitled 2'), findsOneWidget);
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-    expect(editor.controller!.text, '{\n        \n}');
+    expect(editor.controller!.text, '{\n    \n}');
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    expect(editor.controller!.text, '{\n        \n        \n}');
+    expect(editor.controller!.text, '{\n    \n    \n}');
+
+    await tester.enterText(find.byKey(const Key('json-editor')), '  ');
+    editor.controller!.selection = const TextSelection.collapsed(offset: 2);
+    tester.testTextInput.updateEditingValue(
+      const TextEditingValue(
+        text: '  {',
+        selection: TextSelection.collapsed(offset: 3),
+      ),
+    );
+    await tester.pump();
+    expect(editor.controller!.text, '  {}');
+    expect(editor.controller!.selection.baseOffset, 3);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    expect(editor.controller!.text, '  {\n    \n  }');
+    expect(editor.controller!.selection.baseOffset, 8);
 
     await tester.tap(find.text('● Untitled 1'));
     await tester.pumpAndSettle();

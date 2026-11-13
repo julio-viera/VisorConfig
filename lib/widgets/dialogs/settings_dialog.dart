@@ -145,7 +145,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
               items: [
                 DropdownMenuItem(
                   value: false,
-                  child: Text(tr('4 espacios', '4 spaces')),
+                  child: Text(tr('2 espacios', '2 spaces')),
                 ),
                 DropdownMenuItem(
                   value: true,
