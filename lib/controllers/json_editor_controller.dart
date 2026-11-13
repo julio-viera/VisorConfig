@@ -73,6 +73,9 @@ class JsonEditorController extends TextEditingController {
       ConfigFormat.properties => _propertiesTokens,
     };
     final spans = <TextSpan>[];
+    final baseStyle = (style ?? const TextStyle()).copyWith(
+      color: palette.text,
+    );
     var absolute = 0;
     var rangeIndex = 0;
     void append(String part, TextStyle? tokenStyle) {
@@ -227,8 +230,62 @@ class JsonEditorController extends TextEditingController {
     }
     append(text.substring(cursor), null);
     return TextSpan(
-      style: (style ?? const TextStyle()).copyWith(color: palette.text),
-      children: spans,
+      style: baseStyle,
+      children: text.contains('\t')
+          ? _spaceTabs(context, baseStyle, spans)
+          : spans,
     );
+  }
+
+  List<TextSpan> _spaceTabs(
+    BuildContext context,
+    TextStyle baseStyle,
+    List<TextSpan> spans,
+  ) {
+    final painter = TextPainter(
+      textDirection: TextDirection.ltr,
+      textScaler: MediaQuery.textScalerOf(context),
+    );
+    double width(String text) {
+      painter.text = TextSpan(text: text, style: baseStyle);
+      painter.layout();
+      return painter.width;
+    }
+
+    // A literal tab can use the paragraph's tab stops even with letter spacing.
+    // Use one nonbreaking space in the display span to preserve text offsets.
+    final extraWidth = width('  ') - width(_tabPlaceholder);
+    painter.dispose();
+    final spacing =
+        (baseStyle.letterSpacing ?? 0) +
+        extraWidth /
+            (baseStyle.fontSize == null
+                ? 1
+                : MediaQuery.textScalerOf(context).scale(baseStyle.fontSize!) /
+                      baseStyle.fontSize!);
+    return [
+      for (final span in spans)
+        if (!span.text!.contains('\t')) span else ..._splitTabs(span, spacing),
+    ];
+  }
+
+  static const _tabPlaceholder = '\u00a0';
+
+  Iterable<TextSpan> _splitTabs(TextSpan span, double spacing) sync* {
+    final parts = span.text!.split('\t');
+    for (var i = 0; i < parts.length; i++) {
+      if (i > 0) {
+        yield TextSpan(
+          text: _tabPlaceholder,
+          semanticsLabel: '\t',
+          style: (span.style ?? const TextStyle()).copyWith(
+            letterSpacing: spacing,
+          ),
+        );
+      }
+      if (parts[i].isNotEmpty) {
+        yield TextSpan(text: parts[i], style: span.style);
+      }
+    }
   }
 }

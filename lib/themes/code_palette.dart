@@ -31,6 +31,7 @@ class CodePalette extends ThemeExtension<CodePalette> {
     _ => dark ? const Color(0xff111827) : Colors.white,
   };
   Color get text => dark ? const Color(0xfff3f4f6) : const Color(0xff172033);
+  Color get whitespace => muted.withValues(alpha: dark ? .28 : .25);
   Color get muted => dark ? const Color(0xffcbd5e1) : const Color(0xff475569);
   Color get gutter => Color.alphaBlend(
     (dark ? Colors.white : seed(variant)).withValues(alpha: dark ? .045 : .07),

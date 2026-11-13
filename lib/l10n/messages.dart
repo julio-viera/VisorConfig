@@ -1,4 +1,10 @@
 const translatedMessages = <String, Map<String, String>>{
+  'Show whitespace': {
+    'fr': 'Afficher les espaces et tabulations',
+    'pt': 'Mostrar espaços em branco',
+    'de': 'Leerraum anzeigen',
+    'it': 'Mostra gli spazi bianchi',
+  },
   'Editor indentation': {
     'fr': 'Indentation de l’éditeur',
     'pt': 'Recuo do editor',

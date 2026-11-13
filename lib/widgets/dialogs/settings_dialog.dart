@@ -19,6 +19,8 @@ class SettingsDialog extends StatefulWidget {
     this.onColorTheme,
     this.indentWithTabs = false,
     this.onIndentation,
+    this.showWhitespace = false,
+    this.onWhitespace,
   });
   final ThemeMode theme;
   final String language, colorTheme;
@@ -29,6 +31,8 @@ class SettingsDialog extends StatefulWidget {
   final ValueChanged<String>? onColorTheme;
   final bool indentWithTabs;
   final ValueChanged<bool>? onIndentation;
+  final bool showWhitespace;
+  final ValueChanged<bool>? onWhitespace;
   @override
   State<SettingsDialog> createState() => _SettingsDialogState();
 }
@@ -39,6 +43,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
   late double size = widget.fontSize;
   late String colors = widget.colorTheme;
   late bool indentWithTabs = widget.indentWithTabs;
+  late bool showWhitespace = widget.showWhitespace;
   String tr(String es, String en) => AppStrings(
     resolveLanguage(
       language,
@@ -156,6 +161,15 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 if (value == null) return;
                 setState(() => indentWithTabs = value);
                 widget.onIndentation?.call(value);
+              },
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(tr('Mostrar espacios en blanco', 'Show whitespace')),
+              value: showWhitespace,
+              onChanged: (value) {
+                setState(() => showWhitespace = value);
+                widget.onWhitespace?.call(value);
               },
             ),
             const SizedBox(height: 20),

@@ -45,6 +45,8 @@ class WorkspaceScreen extends StatefulWidget {
     this.onColorTheme,
     this.indentWithTabs = false,
     this.onIndentation,
+    this.showWhitespace = false,
+    this.onWhitespace,
     this.lastOpenDirectory,
     this.onOpenDirectory,
     this.beforeExit,
@@ -64,6 +66,8 @@ class WorkspaceScreen extends StatefulWidget {
   final ValueChanged<String>? onColorTheme;
   final bool indentWithTabs;
   final ValueChanged<bool>? onIndentation;
+  final bool showWhitespace;
+  final ValueChanged<bool>? onWhitespace;
   final Future<void> Function()? beforeExit;
   final LaunchResult launch;
   final Stream<LaunchResult>? externalLaunches;
@@ -494,6 +498,8 @@ class _WorkspaceState extends State<WorkspaceScreen>
       onColorTheme: widget.onColorTheme,
       indentWithTabs: widget.indentWithTabs,
       onIndentation: widget.onIndentation,
+      showWhitespace: widget.showWhitespace,
+      onWhitespace: widget.onWhitespace,
     ),
   );
 
@@ -841,6 +847,7 @@ class _WorkspaceState extends State<WorkspaceScreen>
 
   Widget rawView(EditorDocumentController d) => RawEditor(
     document: d,
+    showWhitespace: widget.showWhitespace,
     indentWithTabs: widget.indentWithTabs,
     hint: tr(
       'Pega una configuración aquí o abre un archivo…',

@@ -21,6 +21,7 @@ class SettingsController extends ChangeNotifier {
        font = initial.font,
        lastOpenDirectory = initial.lastOpenDirectory,
        indentWithTabs = initial.indentWithTabs,
+       showWhitespace = initial.showWhitespace,
        colorTheme = initial.colorTheme {
     var maximized = windowSession?.geometry.maximized;
     windowSession?.onChanged = (geometry) {
@@ -40,7 +41,7 @@ class SettingsController extends ChangeNotifier {
   ThemeMode theme;
   String language, colorTheme;
   double fontSize;
-  bool indentWithTabs;
+  bool indentWithTabs, showWhitespace;
   FontPreferences font;
   int _fontRevision = 0;
   bool _disposed = false;
@@ -49,6 +50,12 @@ class SettingsController extends ChangeNotifier {
     this.theme = theme;
     this.language = language;
     this.fontSize = fontSize;
+    notifyListeners();
+    persist();
+  }
+
+  void updateWhitespace(bool value) {
+    showWhitespace = value;
     notifyListeners();
     persist();
   }
@@ -87,6 +94,7 @@ class SettingsController extends ChangeNotifier {
         AppSettings(
           theme: theme,
           indentWithTabs: indentWithTabs,
+          showWhitespace: showWhitespace,
           language: language,
           fontSize: fontSize,
           font: font,

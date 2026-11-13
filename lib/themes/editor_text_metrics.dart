@@ -10,10 +10,10 @@ class EditorTextMetrics {
   EditorTextMetrics(BuildContext context)
     : style = AppTypography.codeStyle(context).copyWith(
         fontSize: defaultEditorFontSize,
-        height: 1.65,
+        height: 1.8,
         leadingDistribution: TextLeadingDistribution.proportional,
         textBaseline: TextBaseline.alphabetic,
-        letterSpacing: 0,
+        letterSpacing: .35,
       ),
       scaler = MediaQuery.textScalerOf(context) {
     strut = StrutStyle.fromTextStyle(style, forceStrutHeight: true);

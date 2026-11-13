@@ -16,9 +16,10 @@ class AppSettings {
     this.window = const WindowGeometry(),
     this.lastOpenDirectory,
     this.indentWithTabs = false,
+    this.showWhitespace = false,
   });
   final String? lastOpenDirectory;
-  final bool indentWithTabs;
+  final bool indentWithTabs, showWhitespace;
   final ThemeMode theme;
   final String language, colorTheme;
   final double fontSize;
@@ -28,6 +29,7 @@ class AppSettings {
     final font = json['fontSize'];
     return AppSettings(
       indentWithTabs: json['indentWithTabs'] == true,
+      showWhitespace: json['showWhitespace'] == true,
       lastOpenDirectory:
           json['lastOpenDirectory'] is String &&
               (json['lastOpenDirectory'] as String).trim().isNotEmpty
@@ -53,6 +55,7 @@ class AppSettings {
   Map<String, dynamic> toJson() => {
     'version': 1,
     'indentWithTabs': indentWithTabs,
+    'showWhitespace': showWhitespace,
     'theme': theme.name,
     'language': language,
     'fontSize': fontSize,

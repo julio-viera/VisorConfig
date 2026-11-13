@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:visor_config/app/visor_config_app.dart';
+import 'package:visor_config/models/app_settings.dart';
 import 'package:visor_config/widgets/graph/graph_view.dart';
 
 void main() {
@@ -71,6 +72,70 @@ void main() {
       contains('Julio'),
     );
   });
+  testWidgets('Enter uses tabs even after a line indented with spaces', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const VisorConfigApp(initialSettings: AppSettings(indentWithTabs: true)),
+    );
+    await tester.pumpAndSettle();
+    final field = find.byKey(const Key('json-editor'));
+    await tester.enterText(field, '{\n  "key": {}\n}');
+    final editor = tester.widget<TextField>(field).controller!;
+    editor.selection = TextSelection.collapsed(
+      offset: editor.text.indexOf('{}') + 1,
+    );
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    expect(editor.text, '{\n  "key": {\n\t\t\n  }\n}');
+  });
+
+  testWidgets('YAML uses spaces for Tab and Enter in tab mode', (tester) async {
+    await tester.pumpWidget(
+      const VisorConfigApp(initialSettings: AppSettings(indentWithTabs: true)),
+    );
+    await tester.pumpAndSettle();
+    final field = find.byKey(const Key('json-editor'));
+    await tester.enterText(field, 'parent:\n  child:');
+    final editor = tester.widget<TextField>(field).controller!;
+    editor.selection = TextSelection.collapsed(offset: editor.text.length);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    expect(editor.text, 'parent:\n  child:\n    ');
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    expect(editor.text, 'parent:\n  child:\n      ');
+  });
+
+  testWidgets('A tab at the end of a line has only one marker region', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const VisorConfigApp(
+        initialSettings: AppSettings(
+          indentWithTabs: true,
+          showWhitespace: true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final field = find.byKey(const Key('json-editor'));
+    await tester.enterText(field, '{\n\t"key": 9,\n}');
+    final controller = tester.widget<TextField>(field).controller!;
+    final offset = controller.text.indexOf(',') + 1;
+    controller.selection = TextSelection.collapsed(offset: offset);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    expect(controller.text, '{\n\t"key": 9,\n\t\n}');
+    final editable = tester
+        .state<EditableTextState>(find.byType(EditableText).first)
+        .renderEditable;
+    expect(
+      editable.getBoxesForSelection(
+        TextSelection(baseOffset: offset + 1, extentOffset: offset + 2),
+      ),
+      hasLength(1),
+    );
+  });
+
   testWidgets('Compact workspace has drawer and no overflow', (tester) async {
     tester.view.physicalSize = const Size(400, 800);
     tester.view.devicePixelRatio = 1;

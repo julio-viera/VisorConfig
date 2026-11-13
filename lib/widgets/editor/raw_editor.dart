@@ -1,7 +1,11 @@
+import 'dart:ui' show BoxWidthStyle;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import '../../controllers/editor_document_controller.dart';
+import '../../models/config_format.dart';
 import '../../themes/app_typography.dart';
 import '../../themes/code_palette.dart';
 import '../../themes/editor_text_metrics.dart';
@@ -18,10 +22,11 @@ class RawEditor extends StatelessWidget {
     required this.hint,
     required this.largeNotice,
     this.indentWithTabs = false,
+    this.showWhitespace = false,
   });
   final EditorDocumentController document;
   final String hint, largeNotice;
-  final bool indentWithTabs;
+  final bool indentWithTabs, showWhitespace;
 
   void insertIndentation({bool newline = false}) {
     final editor = document.editor;
@@ -29,7 +34,9 @@ class RawEditor extends StatelessWidget {
     final selection = value.selection;
     if (!selection.isValid || selection.end > value.text.length) return;
 
-    final unit = indentWithTabs ? '\t' : '  ';
+    final isYaml = document.format == ConfigFormat.yaml;
+    final useTabs = indentWithTabs && !isYaml;
+    final unit = useTabs ? '\t' : '  ';
     var insertion = unit;
     var trailing = '';
     if (newline) {
@@ -38,14 +45,22 @@ class RawEditor extends StatelessWidget {
           ? 0
           : value.text.lastIndexOf('\n', start - 1) + 1;
       final prefix = value.text.substring(lineStart, start);
-      final indent = RegExp(r'^[ \t]*').stringMatch(prefix)!;
+      final leadingWhitespace = RegExp(r'^[ \t]*').stringMatch(prefix)!;
+      final spaces = leadingWhitespace.replaceAll('\t', '  ');
+      final indent = useTabs ? spaces.replaceAll('  ', '\t') : spaces;
       final betweenBraces =
           selection.isCollapsed &&
           prefix.endsWith('{') &&
           start < value.text.length &&
           value.text[start] == '}';
-      insertion = betweenBraces ? '\n$indent$unit' : '\n$indent';
-      if (betweenBraces) trailing = '\n$indent';
+      final yamlMapping =
+          isYaml &&
+          RegExp(r'^(?!#).+:[ \t]*$').hasMatch(prefix.trimLeft()) &&
+          (start == value.text.length || '\r\n'.contains(value.text[start]));
+      insertion = betweenBraces || yamlMapping ? '\n$indent$unit' : '\n$indent';
+      if (betweenBraces) {
+        trailing = '\n${isYaml ? indent : leadingWhitespace}';
+      }
     }
     editor.value = TextEditingValue(
       text: value.text.replaceRange(
@@ -127,7 +142,6 @@ class RawEditor extends StatelessWidget {
                             style: metrics.style.copyWith(
                               color: palette.text,
                               fontSize: defaultEditorFontSize,
-                              height: 1.65,
                             ),
                           ),
                         ),
@@ -185,6 +199,7 @@ class RawEditor extends StatelessWidget {
                             context,
                             defaultEditorFontSize,
                           ) +
+                      lines.longest * metrics.style.letterSpacing! * scale +
                       48,
                 ),
                 height: constraints.maxHeight,
@@ -211,6 +226,11 @@ class RawEditor extends StatelessWidget {
                         child: TextField(
                           key: const Key('json-editor'),
                           controller: document.editor,
+                          // Whitespace markers need glyph bounds, without
+                          // the extra box that fills the rest of a line.
+                          selectionWidthStyle: showWhitespace
+                              ? BoxWidthStyle.tight
+                              : null,
                           inputFormatters: [
                             TextInputFormatter.withFunction((
                               oldValue,
@@ -259,6 +279,22 @@ class RawEditor extends StatelessWidget {
                           decoration: null,
                         ),
                       ),
+                      if (showWhitespace)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: Builder(
+                              builder: (overlayContext) => CustomPaint(
+                                painter: _WhitespacePainter(
+                                  editorContext: context,
+                                  overlayContext: overlayContext,
+                                  document: document,
+                                  color: palette.whitespace,
+                                  metrics: metrics,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       if (text.isEmpty)
                         IgnorePointer(
                           child: Text(
@@ -277,6 +313,100 @@ class RawEditor extends StatelessWidget {
       ),
     );
   }
+}
+
+class _WhitespacePainter extends CustomPainter {
+  _WhitespacePainter({
+    required this.editorContext,
+    required this.overlayContext,
+    required this.metrics,
+    required this.document,
+    required this.color,
+  }) : super(repaint: Listenable.merge([document.editor, document.rawScroll]));
+
+  final BuildContext editorContext, overlayContext;
+  final EditorTextMetrics metrics;
+  final EditorDocumentController document;
+  final Color color;
+  static final _whitespace = RegExp(r'[ \t]');
+
+  RenderEditable? _findEditable(RenderObject object) {
+    if (object is RenderEditable) return object;
+    RenderEditable? editable;
+    object.visitChildren((child) {
+      editable ??= _findEditable(child);
+    });
+    return editable;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final root = editorContext.findRenderObject();
+    final overlay = overlayContext.findRenderObject();
+    if (root == null || overlay is! RenderBox) return;
+    final editable = _findEditable(root);
+    if (editable == null || !editable.hasSize) return;
+
+    final text = document.editor.text;
+    final top = editable.localToGlobal(Offset.zero);
+    final bottom = editable.localToGlobal(
+      Offset(editable.size.width, editable.size.height),
+    );
+    final start = editable.getPositionForPoint(top).offset;
+    final end = editable.getPositionForPoint(bottom).offset;
+    // The layout may include composing text or be between editing updates.
+    if (start < 0 || end <= start || end > text.length) return;
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1
+      ..strokeCap = StrokeCap.round;
+    canvas.save();
+    canvas.clipRect(Offset.zero & size);
+    final origin = overlay.globalToLocal(top);
+    canvas.translate(origin.dx, origin.dy);
+    for (final match in _whitespace.allMatches(text.substring(start, end))) {
+      final offset = start + match.start;
+      final boxes = editable.getBoxesForSelection(
+        TextSelection(baseOffset: offset, extentOffset: offset + 1),
+      );
+      for (final box in boxes) {
+        final rect = box.toRect();
+        if (text[offset] == ' ') {
+          canvas.drawCircle(rect.center, 1, paint);
+        } else {
+          final width = math.min(5.0, rect.width * .65);
+          if (width <= 0) continue;
+          final center = rect.center;
+          final left = center.dx - width / 2;
+          final right = center.dx + width / 2;
+          final head = width / 3;
+          canvas.drawLine(
+            Offset(left, center.dy),
+            Offset(right, center.dy),
+            paint,
+          );
+          canvas.drawLine(
+            Offset(right - head, center.dy - head),
+            Offset(right, center.dy),
+            paint,
+          );
+          canvas.drawLine(
+            Offset(right - head, center.dy + head),
+            Offset(right, center.dy),
+            paint,
+          );
+        }
+      }
+    }
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(_WhitespacePainter oldDelegate) =>
+      oldDelegate.document != document ||
+      oldDelegate.color != color ||
+      oldDelegate.metrics.style != metrics.style ||
+      oldDelegate.metrics.scaler != metrics.scaler;
 }
 
 class LineNumbersPainter extends CustomPainter {
