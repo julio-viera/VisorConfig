@@ -160,6 +160,7 @@ class RawEditor extends StatelessWidget {
                       TextField(
                         key: const Key('json-editor'),
                         controller: document.editor,
+                        focusNode: document.rawFocus,
                         scrollController: document.rawScroll,
                         expands: true,
                         maxLines: null,

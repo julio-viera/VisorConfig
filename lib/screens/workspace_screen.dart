@@ -189,17 +189,25 @@ class _WorkspaceState extends State<WorkspaceScreen>
 
   void addDocument({
     String? name,
-    String text = '{}',
+    String? text,
     String? path,
     bool unsaved = false,
   }) {
     final d = workspace.add(
       untitledLabel: tr('Sin título', 'Untitled'),
       name: name,
-      text: text,
+      text: text ?? '{\n  \n}',
       path: path,
       unsaved: unsaved,
     );
+    if (text == null) {
+      d.editor.selection = const TextSelection.collapsed(offset: 4);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !d.closed && identical(doc, d)) {
+          d.rawFocus.requestFocus();
+        }
+      });
+    }
     revealActiveTab();
     if (path != null && !Platform.isAndroid) watch(d);
   }

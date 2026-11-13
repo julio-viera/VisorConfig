@@ -41,6 +41,7 @@ class EditorDocumentController extends ChangeNotifier {
   final search = TextEditingController();
   final scroll = ScrollController();
   final rawScroll = ScrollController();
+  final rawFocus = FocusNode();
   final graphTransform = TransformationController();
   String graphRoot = r'$';
   final tableScroll = ScrollController();
@@ -333,6 +334,7 @@ class EditorDocumentController extends ChangeNotifier {
     _closeSearchSession();
     watcher?.cancel();
     editor.dispose();
+    rawFocus.dispose();
     search.dispose();
     scroll.dispose();
     rawScroll.dispose();
