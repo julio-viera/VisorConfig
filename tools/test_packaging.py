@@ -26,7 +26,7 @@ class PackagingTests(unittest.TestCase):
             header[:4] = b'\x7fELF'
             header[18:20] = (62).to_bytes(2, 'little')
             (bundle / info['binaryName']).write_bytes(header)
-            for format_name in ('deb', 'rpm', 'flatpak', 'snap'):
+            for format_name in ('deb', 'rpm', 'flatpak', 'snap', 'appimage'):
                 with self.subTest(format=format_name):
                     stage, output = work / format_name / 'stage', work / format_name / 'out'
                     prepare(ROOT, metadata, bundle, stage, output, format_name, 'amd64')
@@ -82,6 +82,13 @@ class PackagingTests(unittest.TestCase):
                         spec = (output / f'{info["packageName"]}.spec').read_text()
                         self.assertIn(info['licenseSpdx'], spec)
                         self.assertIn(f'Version: {native_version}\n', spec)
+                    if format_name == 'appimage':
+                        self.assertEqual((stage / desktop.name).resolve(), desktop)
+                        self.assertTrue((stage / '.DirIcon').resolve().is_file())
+                        version_output = subprocess.check_output(
+                            [str(stage / 'AppRun'), '--version'], text=True,
+                        )
+                        self.assertIn(info['version'], version_output)
                     if format_name == 'snap':
                         recipe = (output / 'snapcraft.yaml').read_text()
                         self.assertIn('extensions: [gnome]', recipe)

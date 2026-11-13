@@ -13,6 +13,8 @@ Los metadatos canónicos están en [`lib/app_info.dart`](../lib/app_info.dart). 
 
 Los scripts no instalan dependencias, no suben paquetes a ninguna tienda y no modifican instalaciones del usuario. Los formatos generados son paquetes locales sin firma. La generación de un paquete no reemplaza su prueba de instalación y ejecución en la distribución de destino.
 
+- AppImage: [`appimagetool`](https://github.com/AppImage/appimagetool) en `PATH`. Puedes indicar otra ruta con `APPIMAGETOOL`. La imagen incluye el bundle de Flutter y usa GTK 3, glibc y las bibliotecas de sistema de la distribución de destino.
+
 ## Comandos
 
 ```sh
@@ -24,6 +26,7 @@ tools/package-deb.sh
 tools/package-rpm.sh
 tools/package-flatpak.sh
 tools/package-snap.sh
+tools/package-appimage.sh
 
 # Compilar una sola vez e intentar todos los formatos
 tools/package-all.sh
@@ -31,7 +34,7 @@ tools/package-all.sh
 # Reutilizar el bundle existente
 tools/package-deb.sh --skip-build
 
-# Preparar payloads, recetas y README sin requerir rpmbuild/snapcraft
+# Preparar payloads, recetas y README sin ejecutar los empaquetadores
 tools/package-all.sh --skip-build --prepare-only
 ```
 
@@ -69,6 +72,7 @@ dist/
     rpm/       # .rpm, receta .spec y los mismos README
     flatpak/   # .flatpak y los mismos README
     snap/      # .snap, snapcraft.yaml y los mismos README
+    appimage/  # .AppImage y los mismos README
 ```
 
 La versión y los nombres se obtienen de `app_info.dart`. Los seis README también están **dentro** de cada paquete, en `usr/share/doc/visor-config/<idioma>/README.md` (en Flatpak bajo `/app/share/doc/...`). Son copias de las guías de usuario de la raíz, con enlaces adaptados a la distribución e imágenes y licencia compartidas. Cada payload incluye `LICENSE` con GPL 3. Los archivos de salida se ignoran en Git.

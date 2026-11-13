@@ -16,7 +16,7 @@ if [[ "$skip" == 0 ]]; then
   (cd "$ROOT" && "$FLUTTER" build linux --release)
 fi
 status=0
-for format in deb rpm flatpak snap; do
+for format in deb rpm flatpak snap appimage; do
   if ! "$ROOT/tools/package-$format.sh" --skip-build "$@"; then
     echo "Packaging failed: $format" >&2
     status=1

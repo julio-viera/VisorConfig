@@ -36,6 +36,8 @@ def prepare(root, metadata_path, bundle, stage, output, format_name, arch):
     shutil.copytree(bundle, payload, dirs_exist_ok=True)
     (payload / binary).chmod(0o755)
     prefix = '/app/lib' if format_name == 'flatpak' else '${SNAP:-}/usr/lib'
+    if format_name == 'appimage':
+        prefix = '$(dirname -- "$0")/../lib'
     heading = shlex.quote(f'{name} {version}')
     usage = shlex.quote(f'Usage: {package} [FILE.json|FILE.txt|JSON_TEXT]...\n       {package} --file PATH\n       {package} --json JSON_TEXT\nOptions: --help, --version, -- (end options)')
     launcher = f'''#!/bin/sh
@@ -68,6 +70,15 @@ StartupWMClass={app_id}
     if format_name == 'snap':
         desktop = desktop.replace(f'Icon={app_id}', f'Icon=${{SNAP}}/{icon}')
     write(stage / 'usr/share/applications' / f'{app_id}.desktop', desktop)
+    if format_name == 'appimage':
+        write(
+            stage / 'AppRun',
+            f'#!/bin/sh\nexec "$(dirname -- "$0")/usr/bin/{package}" "$@"\n',
+            0o755,
+        )
+        (stage / f'{app_id}.desktop').symlink_to(f'usr/share/applications/{app_id}.desktop')
+        shutil.copyfile(root / 'assets/app_icon_256.png', stage / f'{app_id}.png')
+        (stage / '.DirIcon').symlink_to(f'{app_id}.png')
     for docs in (stage / 'usr/share/doc' / package, output):
         shutil.copytree(root / 'docs/images', docs / 'images', dirs_exist_ok=True)
         shutil.copyfile(root / 'LICENSE', docs / 'LICENSE')

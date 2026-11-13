@@ -23,6 +23,7 @@ init_package() {
       rpm) require rpmbuild ;;
       flatpak) require flatpak ;;
       snap) require snapcraft ;;
+      appimage) require "${APPIMAGETOOL:-appimagetool}" ;;
     esac
   fi
   WORK="$(mktemp -d "${TMPDIR:-/tmp}/visor-package.XXXXXXXX")"
