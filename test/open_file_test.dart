@@ -82,7 +82,7 @@ void main() {
     );
     await tester.tap(find.text('Untitled 1'));
     await tester.pumpAndSettle();
-    expect(contents(tester), isEmpty);
+    expect(contents(tester), '{\n  \n}');
   });
   testWidgets(
     'Cancel unsaved prompt prevents chooser; cancel chooser retains original document',
@@ -137,12 +137,12 @@ void main() {
       await tester.tap(find.byTooltip('Open · Ctrl+O'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Save'));
-      await settle(tester);
+      await tester.pump();
       for (var i = 0; i < 30 && contents(tester) != '{"opened":true}'; i++) {
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 50)),
         );
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 50));
       }
       expect(selector.opens, 1);
       expect(contents(tester), '{"opened":true}');

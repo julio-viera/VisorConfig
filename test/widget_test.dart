@@ -126,7 +126,9 @@ void main() {
     await tester.pump();
     expect(controller.text, '{\n\t"key": 9,\n\t\n}');
     final editable = tester
-        .state<EditableTextState>(find.byType(EditableText).first)
+        .state<EditableTextState>(
+          find.descendant(of: field, matching: find.byType(EditableText)),
+        )
         .renderEditable;
     expect(
       editable.getBoxesForSelection(
