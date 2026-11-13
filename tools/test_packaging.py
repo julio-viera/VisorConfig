@@ -15,10 +15,8 @@ class PackagingTests(unittest.TestCase):
     def test_each_format_contains_metadata_license_and_readmes_in_every_language(self):
         with tempfile.TemporaryDirectory(prefix='visor-package-test-') as temporary:
             work = Path(temporary)
-            metadata = work / 'metadata.json'
-            exported = subprocess.check_output([os.environ.get('DART', 'dart'), str(ROOT / 'tools/export_metadata.dart')], cwd=ROOT, text=True)
-            info = json.loads(exported)
-            metadata.write_text(exported)
+            metadata = ROOT / 'assets/app_info.json'
+            info = json.loads(metadata.read_text(encoding='utf-8'))
             bundle = work / 'bundle'
             (bundle / 'data').mkdir(parents=True)
             # Minimal x86_64 ELF header for staging checks; no executable is run.

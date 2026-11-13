@@ -1,6 +1,5 @@
+import 'dart:convert';
 import 'dart:io';
-
-import 'package:visor_config/app_info.dart';
 
 void main() {
   final root = File.fromUri(Platform.script).parent.parent;
@@ -11,16 +10,70 @@ void main() {
     if (next != original) file.writeAsStringSync(next);
   }
 
+  final metadata = jsonDecode(
+    File('${root.path}/assets/app_info.json').readAsStringSync(),
+  ) as Map<String, dynamic>;
+  final descriptions = Map<String, String>.from(
+    metadata['descriptions'] as Map,
+  );
+  final appName = metadata['name'] as String;
+  final appVersion = metadata['version'] as String;
+  final buildNumber = metadata['buildNumber'] as int;
+  final appId = metadata['id'] as String;
+  final appAuthor = metadata['author'] as String;
+
+  const fields = {
+    'appName': 'name',
+    'appVersion': 'version',
+    'appAuthor': 'author',
+    'appLicenseName': 'licenseName',
+    'appLicenseSpdx': 'licenseSpdx',
+    'appLicenseUrl': 'licenseUrl',
+    'appRepositoryUrl': 'repositoryUrl',
+    'appIssuesUrl': 'issuesUrl',
+    'appId': 'id',
+    'appPackageName': 'packageName',
+    'appBinaryName': 'binaryName',
+  };
+  String dartString(String value) => jsonEncode(value).replaceAll(r'$', r'\$');
+
+  final source = StringBuffer(
+    '// Generated from assets/app_info.json by tools/sync_app_info.dart.\n',
+  );
+  for (final field in fields.entries) {
+    source.writeln(
+      'const ${field.key} = ${dartString(metadata[field.value] as String)};',
+    );
+  }
+  source.writeln('\nconst appDescriptions = <String, String>{');
+  for (final entry in descriptions.entries) {
+    source.writeln('  ${dartString(entry.key)}: ${dartString(entry.value)},');
+  }
+  source.writeln('};');
+  source.writeln(
+    '''
+String appDescriptionFor(String languageCode) =>
+    appDescriptions[languageCode] ?? appDescriptions['en']!;
+'''
+        .trimRight(),
+  );
+  final generated = File('${root.path}/lib/app_info.dart');
+  final generatedText = source.toString();
+  if (!generated.existsSync() ||
+      generated.readAsStringSync() != generatedText) {
+    generated.writeAsStringSync(generatedText);
+  }
+
   update(
     'pubspec.yaml',
     (s) => s
         .replaceFirst(
           RegExp(r'^version:.*$', multiLine: true),
-          'version: $appVersion+1',
+          'version: $appVersion+$buildNumber',
         )
         .replaceFirst(
           RegExp(r'^description:.*$', multiLine: true),
-          'description: "${appDescriptions['en']}"',
+          'description: ${jsonEncode(descriptions['en']!)}',
         ),
   );
   update(

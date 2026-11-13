@@ -22,8 +22,8 @@ def prepare(root, metadata_path, bundle, stage, output, format_name, arch):
     name, version, package, app_id, binary = (info[k] for k in ('name', 'version', 'packageName', 'id', 'binaryName'))
     if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?', version):
         raise ValueError('Packaging requires a three-component appVersion, such as 1.0.0 or 1.0.0-beta.1')
-    yaml_version = re.search(r'^version:\s*([^+\s]+)', (root / 'pubspec.yaml').read_text(), re.M).group(1)
-    if yaml_version != version:
+    yaml_version = re.search(r'^version:[ \t]*([^\s]+)', (root / 'pubspec.yaml').read_text(), re.M).group(1)
+    if yaml_version != f"{version}+{info['buildNumber']}":
         raise ValueError('Version mismatch: run dart tools/sync_app_info.dart before packaging')
     # Debian and RPM sort prereleases before the stable version with a tilde.
     native_version = version.replace('-', '~', 1).replace('-', '.')

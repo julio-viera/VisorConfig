@@ -16,7 +16,7 @@ init_package() {
       *) echo "Unknown argument: $argument" >&2; exit 2 ;;
     esac
   done
-  require "$DART"; require python3
+  require python3
   if [[ "$PREPARE_ONLY" == 0 ]]; then
     case "$FORMAT" in
       deb) require dpkg-deb ;;
@@ -28,7 +28,7 @@ init_package() {
   fi
   WORK="$(mktemp -d "${TMPDIR:-/tmp}/visor-package.XXXXXXXX")"
   trap 'rm -rf -- "$WORK"' EXIT
-  "$DART" "$ROOT/tools/export_metadata.dart" > "$WORK/metadata.json"
+  cp -- "$ROOT/assets/app_info.json" "$WORK/metadata.json"
   APP_VERSION="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' "$WORK/metadata.json")"
   APP_PACKAGE="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["packageName"])' "$WORK/metadata.json")"
   APP_ID="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["id"])' "$WORK/metadata.json")"
@@ -39,7 +39,7 @@ init_package() {
     *) echo 'Unsupported build architecture' >&2; exit 2 ;;
   esac
   if [[ "$SKIP_BUILD" == 0 ]]; then
-    require "$FLUTTER"
+    require "$DART"; require "$FLUTTER"
     "$DART" "$ROOT/tools/sync_app_info.dart"
     (cd "$ROOT" && "$FLUTTER" build linux --release --build-name "$APP_VERSION")
   fi

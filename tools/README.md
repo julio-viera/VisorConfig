@@ -1,6 +1,6 @@
 # Herramientas de Visor Config
 
-Los metadatos canónicos están en [`lib/app_info.dart`](../lib/app_info.dart). No se leen constantes duplicadas desde scripts ni se usa `eval` para cargar datos.
+Los metadatos canónicos están en [`assets/app_info.json`](../assets/app_info.json). El empaquetado lee ese JSON directamente. El sincronizador genera `lib/app_info.dart` para incorporar los datos al binario sin leer el JSON al ejecutar la app. Después de editar el JSON, ejecuta el sincronizador antes de compilar con Flutter directamente. Los scripts de empaquetado lo ejecutan al compilar.
 
 ## Requisitos
 
@@ -18,7 +18,7 @@ Los scripts no instalan dependencias, no suben paquetes a ninguna tienda y no mo
 ## Comandos
 
 ```sh
-# Sincronizar los archivos que Flutter/native necesitan a partir de app_info.dart
+# Sincronizar los archivos que Flutter/native necesitan a partir de assets/app_info.json
 dart tools/sync_app_info.dart
 
 # Cada script compila Linux antes de empaquetar
@@ -75,7 +75,7 @@ dist/
     appimage/  # .AppImage y los mismos README
 ```
 
-La versión y los nombres se obtienen de `app_info.dart`. Los seis README también están **dentro** de cada paquete, en `usr/share/doc/visor-config/<idioma>/README.md` (en Flatpak bajo `/app/share/doc/...`). Son copias de las guías de usuario de la raíz, con enlaces adaptados a la distribución e imágenes y licencia compartidas. Cada payload incluye `LICENSE` con GPL 3. Los archivos de salida se ignoran en Git.
+La versión y los nombres se obtienen de `assets/app_info.json`. Los seis README también están **dentro** de cada paquete, en `usr/share/doc/visor-config/<idioma>/README.md` (en Flatpak bajo `/app/share/doc/...`). Son copias de las guías de usuario de la raíz, con enlaces adaptados a la distribución e imágenes y licencia compartidas. Cada payload incluye `LICENSE` con GPL 3. Los archivos de salida se ignoran en Git.
 
 En `.deb` se calcula la versión mínima de glibc leyendo los requisitos de los ELF incluidos. En RPM se conservan las dependencias automáticas del empaquetador. Flatpak permite acceso a la carpeta personal y medios extraíbles para abrir y guardar configuraciones; el selector mantiene la integración GTK. Snap utiliza la extensión GNOME y los plugs `home` y `removable-media`; este último puede necesitar conexión manual.
 
