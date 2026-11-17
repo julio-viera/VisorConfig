@@ -12,5 +12,5 @@
 
 | Version | Status | Links |
 | --- | --- | --- |
-| 1.0.0-beta.2 | Pre-release | [Release notes](dist-docs/README-v1.0.0-beta.2.md) |
+| 1.0.0-beta.2 | Pre-release | [Downloads](https://github.com/julio-viera/VisorConfig/releases/tag/v1.0.0-beta.2) . [Release notes](dist-docs/README-v1.0.0-beta.2.md) |
 | 1.0.0-beta.1 | Pre-release | [Downloads](https://github.com/julio-viera/VisorConfig/releases/tag/v1.0.0-beta.1) · [Release notes](dist-docs/README-v1.0.0.md) |
