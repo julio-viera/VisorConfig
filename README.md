@@ -41,4 +41,4 @@ Search within the active document by text or JSONPath. The status bar shows synt
 
 The appearance follows the system theme and can also be set to light or dark. You can choose the color scheme, font, and font size.
 
-[GPL 3 license](LICENSE)
+[GPL 3 license](LICENSE) · [Third-party license notices](THIRD_PARTY_NOTICES.md)

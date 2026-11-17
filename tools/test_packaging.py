@@ -1,4 +1,5 @@
 """Payload integration tests: python3 -m unittest discover -s tools -p 'test_*.py'."""
+import gzip
 import json
 import os
 import re
@@ -18,7 +19,10 @@ class PackagingTests(unittest.TestCase):
             metadata = ROOT / 'assets/app_info.json'
             info = json.loads(metadata.read_text(encoding='utf-8'))
             bundle = work / 'bundle'
-            (bundle / 'data').mkdir(parents=True)
+            assets = bundle / 'data/flutter_assets'
+            assets.mkdir(parents=True)
+            notices = b'Test dependency license notice\n'
+            (assets / 'NOTICES.Z').write_bytes(gzip.compress(notices))
             # Minimal x86_64 ELF header for staging checks; no executable is run.
             header = bytearray(20)
             header[:4] = b'\x7fELF'
@@ -42,6 +46,9 @@ class PackagingTests(unittest.TestCase):
                                 for document in (readme, installed):
                                     self.assertTrue((document.parent / target).is_file(), target)
                     self.assertEqual(json.loads((output / 'app-info.json').read_text()), info)
+                    for docs in (output, stage / 'usr/share/doc' / info['packageName']):
+                        self.assertEqual((docs / 'FLUTTER_NOTICES.txt').read_bytes(), notices)
+                        self.assertTrue((docs / 'THIRD_PARTY_NOTICES.md').is_file())
                     self.assertTrue((stage / 'usr/share/licenses' / info['packageName'] / 'LICENSE').exists())
                     desktop = stage / 'usr/share/applications' / f'{info["id"]}.desktop'
                     if format_name == 'snap':
