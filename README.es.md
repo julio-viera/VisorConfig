@@ -41,4 +41,10 @@ Busca en el documento activo por texto o JSONPath. La barra de estado muestra lo
 
 Apariencia adaptada al tema del sistema, claro y oscuro. Pero también permite seleccionar esquema de colores, fuentes y tamaños.
 
+![Editor JSON en modo oscuro con la paleta Amatista](docs/images/editor-json.png)
+
+![Editor YAML en modo claro con la paleta Océano](docs/images/editor-yaml.png)
+
+![Editor dotenv en modo oscuro con la paleta Ámbar](docs/images/editor-env.png)
+
 [Licencia GPL 3](LICENSE)

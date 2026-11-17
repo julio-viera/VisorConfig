@@ -41,4 +41,10 @@ Cerca nel documento attivo per testo o JSONPath. La barra di stato mostra gli er
 
 L’aspetto segue il tema di sistema e può anche essere impostato su chiaro o scuro. Puoi scegliere la tavolozza dei colori, il carattere e la sua dimensione.
 
+![Editor JSON in modalità scura con la palette Ametista](docs/images/editor-json.png)
+
+![Editor YAML in modalità chiara con la palette Oceano](docs/images/editor-yaml.png)
+
+![Editor dotenv in modalità scura con la palette Ambra](docs/images/editor-env.png)
+
 [Licenza GPL 3](LICENSE)

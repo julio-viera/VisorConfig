@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate package payloads and bundle the localized user guides."""
+import gzip
 import json
 import os
 from pathlib import Path
@@ -79,13 +80,22 @@ StartupWMClass={app_id}
         (stage / f'{app_id}.desktop').symlink_to(f'usr/share/applications/{app_id}.desktop')
         shutil.copyfile(root / 'assets/app_icon_256.png', stage / f'{app_id}.png')
         (stage / '.DirIcon').symlink_to(f'{app_id}.png')
+    flutter_notices = bundle / 'data/flutter_assets/NOTICES.Z'
     for docs in (stage / 'usr/share/doc' / package, output):
         shutil.copytree(root / 'docs/images', docs / 'images', dirs_exist_ok=True)
         shutil.copyfile(root / 'LICENSE', docs / 'LICENSE')
+        shutil.copyfile(root / 'THIRD_PARTY_NOTICES.md', docs / 'THIRD_PARTY_NOTICES.md')
+        notices_text = docs / 'FLUTTER_NOTICES.txt'
+        if flutter_notices.is_file():
+            with gzip.open(flutter_notices, 'rb') as source, notices_text.open('wb') as target:
+                shutil.copyfileobj(source, target)
+        else:
+            notices_text.unlink(missing_ok=True)
         for lang in info['descriptions']:
             filename = 'README.md' if lang == 'en' else f'README.{lang}.md'
             text = (root / filename).read_text(encoding='utf-8')
             text = text.replace('docs/images/', '../images/').replace('(LICENSE)', '(../LICENSE)')
+            text = text.replace('(THIRD_PARTY_NOTICES.md)', '(../THIRD_PARTY_NOTICES.md)')
             releases_url = f"{info['repositoryUrl']}/blob/HEAD/RELEASES.md"
             text = text.replace('(RELEASES.md)', f'({releases_url})')
             for target in info['descriptions']:
