@@ -41,4 +41,10 @@ Search within the active document by text or JSONPath. The status bar shows synt
 
 The appearance follows the system theme and can also be set to light or dark. You can choose the color scheme, font, and font size.
 
+![JSON editor in dark mode with the Amethyst palette](docs/images/editor-json.png)
+
+![YAML editor in light mode with the Ocean palette](docs/images/editor-yaml.png)
+
+![dotenv editor in dark mode with the Amber palette](docs/images/editor-env.png)
+
 [GPL 3 license](LICENSE) · [Third-party license notices](THIRD_PARTY_NOTICES.md)

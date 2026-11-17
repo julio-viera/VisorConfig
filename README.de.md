@@ -41,4 +41,10 @@ Durchsuchen Sie das aktive Dokument nach Text oder per JSONPath. Die Statusleist
 
 Die Darstellung richtet sich nach dem Systemdesign und kann auch auf hell oder dunkel eingestellt werden. Farbschema, Schriftart und Schriftgröße sind wählbar.
 
+![JSON-Editor im dunklen Modus mit der Farbpalette Amethyst](docs/images/editor-json.png)
+
+![YAML-Editor im hellen Modus mit der Farbpalette Ozean](docs/images/editor-yaml.png)
+
+![dotenv-Editor im dunklen Modus mit der Farbpalette Bernstein](docs/images/editor-env.png)
+
 [GPL-3-Lizenz](LICENSE)

@@ -41,4 +41,10 @@ Busque no documento ativo por texto ou JSONPath. A barra de status mostra erros 
 
 A aparência segue o tema do sistema e também pode ser definida como clara ou escura. Você pode escolher a paleta de cores, a fonte e seu tamanho.
 
+![Editor JSON no modo escuro com a paleta Ametista](docs/images/editor-json.png)
+
+![Editor YAML no modo claro com a paleta Oceano](docs/images/editor-yaml.png)
+
+![Editor dotenv no modo escuro com a paleta Âmbar](docs/images/editor-env.png)
+
 [Licença GPL 3](LICENSE)

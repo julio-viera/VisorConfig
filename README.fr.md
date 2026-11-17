@@ -41,4 +41,10 @@ Effectuez une recherche dans le document actif par texte ou par JSONPath. La bar
 
 L’apparence suit le thème du système et peut aussi être réglée sur clair ou sombre. Vous pouvez choisir la palette de couleurs, la police et sa taille.
 
+![Éditeur JSON en mode sombre avec la palette Améthyste](docs/images/editor-json.png)
+
+![Éditeur YAML en mode clair avec la palette Océan](docs/images/editor-yaml.png)
+
+![Éditeur dotenv en mode sombre avec la palette Ambre](docs/images/editor-env.png)
+
 [Licence GPL 3](LICENSE)
